@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log In — NightTime RP Forums</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="stars"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">🌙</div>
+        NightTime RP
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Forums</a>
+        <a href="category.html?id=3">Roleplay</a>
+        <a href="category.html?id=5">Events</a>
+        <a href="category.html?id=4">Lore</a>
+      </div>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-secondary btn-sm">Log In</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <h1>Welcome Back</h1>
+      <p class="subtitle">Log in to NightTime RP Forums</p>
+
+      <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="login-email">Email or Username</label>
+          <input type="text" id="login-email" class="form-input" placeholder="Enter your email or username" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="Enter your password" required>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;">
+          <label style="display:flex;align-items:center;gap:6px;font-size:0.85rem;color:var(--text-secondary);cursor:pointer;">
+            <input type="checkbox" style="accent-color:var(--accent)"> Remember me
+          </label>
+          <a href="#" style="font-size:0.85rem;" onclick="alert('Password reset feature coming soon!')">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary btn-lg">Log In</button>
+      </form>
+
+      <div class="auth-divider">or continue with</div>
+
+      <div style="display:flex;gap:0.75rem;">
+        <button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="alert('Discord OAuth coming soon!')">
+          💬 Discord
+        </button>
+        <button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="alert('GitHub OAuth coming soon!')">
+          🐙 GitHub
+        </button>
+      </div>
+
+      <div class="auth-footer">
+        Don't have an account? <a href="register.html">Sign up</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

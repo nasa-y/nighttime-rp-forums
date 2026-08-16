@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thread — NightTime RP Forums</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="stars"></div>
+
+  <nav class="navbar">
+    <div class="navbar-inner">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">🌙</div>
+        NightTime RP
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Forums</a>
+        <a href="category.html?id=3">Roleplay</a>
+        <a href="category.html?id=5">Events</a>
+        <a href="category.html?id=4">Lore</a>
+      </div>
+      <div class="nav-actions">
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input type="text" placeholder="Search forums...">
+        </div>
+        <a href="login.html" class="btn btn-secondary btn-sm">Log In</a>
+        <a href="register.html" class="btn btn-primary btn-sm">Sign Up</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="index.html">Forums</a>
+      <span class="sep">›</span>
+      <a href="category.html?id=3">Night City Roleplay</a>
+      <span class="sep">›</span>
+      <span>Thread</span>
+    </div>
+
+    <div class="thread-header" id="thread-header"></div>
+
+    <div class="post-list" id="post-list"></div>
+
+    <div class="reply-box">
+      <h3>💬 Post a Reply</h3>
+      <form onsubmit="event.preventDefault(); alert('Reply posted! (Connect a backend to save)')">
+        <div class="form-group">
+          <label>Your Reply</label>
+          <textarea class="form-input" placeholder="Write your response... Use *text* for italics and **text** for bold in RP." rows="5"></textarea>
+        </div>
+        <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="alert('Draft saved!')">Save Draft</button>
+          <button type="submit" class="btn btn-primary btn-sm">Post Reply</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>NightTime RP Forums &copy; 2026 — Where shadows tell stories.</p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
