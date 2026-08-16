@@ -7,37 +7,30 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="stars"></div>
 
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">
-        <div class="logo-icon">🌙</div>
+        <div class="logo-icon">NT</div>
         NightTime RP
       </a>
       <div class="nav-links">
         <a href="index.html">Forums</a>
-        <a href="category.html?id=3">Roleplay</a>
-        <a href="category.html?id=5">Events</a>
-        <a href="category.html?id=4">Lore</a>
+        <a href="category.html?id=3">LSPD</a>
+        <a href="category.html?id=4">EMS</a>
+        <a href="category.html?id=5">Gangs</a>
+        <a href="category.html?id=6">Civilians</a>
       </div>
-      <div class="nav-actions">
-        <div class="search-bar">
-          <span class="search-icon">🔍</span>
-          <input type="text" placeholder="Search forums...">
-        </div>
-        <a href="login.html" class="btn btn-secondary btn-sm">Log In</a>
-        <a href="register.html" class="btn btn-primary btn-sm">Sign Up</a>
-      </div>
+      <div class="nav-actions" id="nav-actions"></div>
     </div>
   </nav>
 
   <div class="container">
     <div class="breadcrumb">
       <a href="index.html">Forums</a>
-      <span class="sep">›</span>
-      <a href="category.html?id=3">Night City Roleplay</a>
-      <span class="sep">›</span>
+      <span class="sep">&rsaquo;</span>
+      <a href="category.html?id=1">Category</a>
+      <span class="sep">&rsaquo;</span>
       <span>Thread</span>
     </div>
 
@@ -46,14 +39,14 @@
     <div class="post-list" id="post-list"></div>
 
     <div class="reply-box">
-      <h3>💬 Post a Reply</h3>
-      <form onsubmit="event.preventDefault(); alert('Reply posted! (Connect a backend to save)')">
+      <h3>Post a Reply</h3>
+      <form onsubmit="event.preventDefault(); alert('Reply posted! (Connect a backend to save replies)')">
         <div class="form-group">
           <label>Your Reply</label>
-          <textarea class="form-input" placeholder="Write your response... Use *text* for italics and **text** for bold in RP." rows="5"></textarea>
+          <textarea class="form-input" placeholder="Write your RP response... Use *text* for actions and &quot;quotes&quot; for speech." rows="5"></textarea>
         </div>
         <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
-          <button type="button" class="btn btn-secondary btn-sm" onclick="alert('Draft saved!')">Save Draft</button>
+          <button type="button" class="btn btn-secondary btn-sm">Save Draft</button>
           <button type="submit" class="btn btn-primary btn-sm">Post Reply</button>
         </div>
       </form>
@@ -61,7 +54,7 @@
   </div>
 
   <footer class="footer">
-    <p>NightTime RP Forums &copy; 2026 — Where shadows tell stories.</p>
+    <p>NightTime RP &copy; 2026 — FiveM Roleplay Server</p>
   </footer>
 
   <script src="js/app.js"></script>

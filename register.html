@@ -7,53 +7,53 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="stars"></div>
 
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">
-        <div class="logo-icon">🌙</div>
+        <div class="logo-icon">NT</div>
         NightTime RP
       </a>
       <div class="nav-links">
         <a href="index.html">Forums</a>
-        <a href="category.html?id=3">Roleplay</a>
-        <a href="category.html?id=5">Events</a>
-        <a href="category.html?id=4">Lore</a>
+        <a href="category.html?id=3">LSPD</a>
+        <a href="category.html?id=4">EMS</a>
+        <a href="category.html?id=5">Gangs</a>
+        <a href="category.html?id=6">Civilians</a>
       </div>
-      <div class="nav-actions">
-        <a href="login.html" class="btn btn-secondary btn-sm">Log In</a>
-        <a href="register.html" class="btn btn-primary btn-sm">Sign Up</a>
-      </div>
+      <div class="nav-actions" id="nav-actions"></div>
     </div>
   </nav>
 
   <div class="auth-page">
     <div class="auth-card">
-      <h1>Join the Night</h1>
-      <p class="subtitle">Create your NightTime RP account</p>
+      <h1>Join NightTime RP</h1>
+      <p class="subtitle">Create your forum account</p>
+
+      <div class="auth-error" id="auth-error"></div>
+      <div class="auth-success" id="auth-success"></div>
 
       <form onsubmit="handleRegister(event)">
         <div class="form-group">
           <label for="reg-name">Username</label>
-          <input type="text" id="reg-name" class="form-input" placeholder="Choose a username" required>
+          <input type="text" id="reg-name" class="form-input" placeholder="Choose a username" required minlength="3" maxlength="24">
         </div>
         <div class="form-group">
           <label for="reg-email">Email</label>
-          <input type="email" id="reg-email" class="form-input" placeholder="Enter your email" required>
+          <input type="email" id="reg-email" class="form-input" placeholder="your@email.com" required>
         </div>
         <div class="form-group">
           <label for="reg-password">Password</label>
-          <input type="password" id="reg-password" class="form-input" placeholder="Create a password (min 8 characters)" required minlength="8">
+          <input type="password" id="reg-password" class="form-input" placeholder="Min 6 characters" required minlength="6">
         </div>
         <div class="form-group">
           <label for="reg-confirm">Confirm Password</label>
-          <input type="password" id="reg-confirm" class="form-input" placeholder="Confirm your password" required>
+          <input type="password" id="reg-confirm" class="form-input" placeholder="Repeat your password" required>
         </div>
         <div style="margin-bottom:1.25rem;">
-          <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.8rem;color:var(--text-secondary);cursor:pointer;">
+          <label style="display:flex;align-items:flex-start;gap:8px;font-size:0.75rem;color:var(--text-secondary);cursor:pointer;">
             <input type="checkbox" required style="accent-color:var(--accent);margin-top:3px">
-            <span>I agree to the <a href="#">Terms of Service</a> and <a href="#">Community Rules</a></span>
+            <span>I agree to the Server Rules and Terms of Service</span>
           </label>
         </div>
         <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
@@ -62,11 +62,11 @@
       <div class="auth-divider">or sign up with</div>
 
       <div style="display:flex;gap:0.75rem;">
-        <button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="alert('Discord OAuth coming soon!')">
-          💬 Discord
+        <button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="alert('Discord OAuth — join our Discord and verify!')">
+          Discord
         </button>
-        <button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="alert('GitHub OAuth coming soon!')">
-          🐙 GitHub
+        <button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="alert('FiveM License — coming soon!')">
+          FiveM
         </button>
       </div>
 

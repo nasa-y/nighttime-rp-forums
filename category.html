@@ -7,75 +7,72 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="stars"></div>
 
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">
-        <div class="logo-icon">🌙</div>
+        <div class="logo-icon">NT</div>
         NightTime RP
       </a>
       <div class="nav-links">
         <a href="index.html">Forums</a>
-        <a href="category.html?id=3">Roleplay</a>
-        <a href="category.html?id=5">Events</a>
-        <a href="category.html?id=4">Lore</a>
+        <a href="category.html?id=3">LSPD</a>
+        <a href="category.html?id=4">EMS</a>
+        <a href="category.html?id=5">Gangs</a>
+        <a href="category.html?id=6">Civilians</a>
       </div>
-      <div class="nav-actions">
-        <div class="search-bar">
-          <span class="search-icon">🔍</span>
-          <input type="text" placeholder="Search forums...">
-        </div>
-        <a href="login.html" class="btn btn-secondary btn-sm">Log In</a>
-        <a href="register.html" class="btn btn-primary btn-sm">Sign Up</a>
-      </div>
+      <div class="nav-actions" id="nav-actions"></div>
     </div>
   </nav>
 
   <div class="container">
     <div class="breadcrumb">
       <a href="index.html">Forums</a>
-      <span class="sep">›</span>
-      <span>General Discussion</span>
+      <span class="sep">&rsaquo;</span>
+      <span>Category</span>
     </div>
 
     <div class="main-content">
       <div>
         <div class="new-thread-bar">
-          <h2 style="font-size:1.25rem;font-weight:700;">General Discussion</h2>
-          <button class="btn btn-primary btn-sm" onclick="alert('Create thread feature — connect a backend to enable!')">+ New Thread</button>
+          <h2 style="font-size:1.2rem;font-weight:700;">Category Threads</h2>
+          <button class="btn btn-primary btn-sm" onclick="alert('Create a thread — login required!')">+ New Thread</button>
         </div>
         <div class="thread-list" id="thread-list"></div>
 
         <div class="pagination">
-          <button>← Prev</button>
+          <button>&larr; Prev</button>
           <button class="active">1</button>
           <button>2</button>
           <button>3</button>
-          <button>Next →</button>
+          <button>Next &rarr;</button>
         </div>
       </div>
 
       <aside class="sidebar">
+        <div class="sidebar-card">
+          <div id="server-status"></div>
+        </div>
+
         <div class="sidebar-card">
           <h3>🟢 Online Now</h3>
           <div class="online-users" id="online-users"></div>
         </div>
 
         <div class="sidebar-card">
-          <h3>📊 Category Stats</h3>
-          <div style="display:flex;flex-direction:column;gap:8px;font-size:0.85rem;">
+          <h3>📊 Stats</h3>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:0.8rem;">
             <div style="display:flex;justify-content:space-between;">
               <span style="color:var(--text-muted)">Threads</span>
-              <span style="font-weight:600">342</span>
+              <span style="font-weight:600">1,459</span>
             </div>
             <div style="display:flex;justify-content:space-between;">
               <span style="color:var(--text-muted)">Posts</span>
-              <span style="font-weight:600">4,821</span>
+              <span style="font-weight:600">15,109</span>
             </div>
             <div style="display:flex;justify-content:space-between;">
-              <span style="color:var(--text-muted)">Latest poster</span>
-              <span style="color:var(--accent-light)">NightWalker</span>
+              <span style="color:var(--text-muted)">Members</span>
+              <span style="font-weight:600">892</span>
             </div>
           </div>
         </div>
@@ -84,7 +81,7 @@
   </div>
 
   <footer class="footer">
-    <p>NightTime RP Forums &copy; 2026 — Where shadows tell stories.</p>
+    <p>NightTime RP &copy; 2026 — FiveM Roleplay Server</p>
   </footer>
 
   <script src="js/app.js"></script>

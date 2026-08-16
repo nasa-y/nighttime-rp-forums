@@ -3,55 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NightTime RP Forums</title>
+  <title>NightTime RP — FiveM Roleplay Forums</title>
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="stars"></div>
 
   <nav class="navbar">
     <div class="navbar-inner">
       <a href="index.html" class="logo">
-        <div class="logo-icon">🌙</div>
+        <div class="logo-icon">NT</div>
         NightTime RP
       </a>
       <div class="nav-links">
         <a href="index.html" class="active">Forums</a>
-        <a href="category.html?id=3">Roleplay</a>
-        <a href="category.html?id=5">Events</a>
-        <a href="category.html?id=4">Lore</a>
+        <a href="category.html?id=3">LSPD</a>
+        <a href="category.html?id=4">EMS</a>
+        <a href="category.html?id=5">Gangs</a>
+        <a href="category.html?id=6">Civilians</a>
       </div>
-      <div class="nav-actions">
-        <div class="search-bar">
-          <span class="search-icon">🔍</span>
-          <input type="text" placeholder="Search forums...">
-        </div>
-        <a href="login.html" class="btn btn-secondary btn-sm">Log In</a>
-        <a href="register.html" class="btn btn-primary btn-sm">Sign Up</a>
-      </div>
+      <div class="nav-actions" id="nav-actions"></div>
     </div>
   </nav>
 
   <section class="hero">
-    <h1>NightTime RP Forums</h1>
-    <p>Enter the neon-lit streets of Night City. Create your character. Write your story.</p>
+    <h1><span>NightTime RP</span></h1>
+    <p>FiveM Roleplay Server — Los Santos. Your story starts here.</p>
     <div class="hero-stats">
       <div class="hero-stat">
-        <div class="number">1,386</div>
+        <div class="number">1,459</div>
         <div class="label">Threads</div>
       </div>
       <div class="hero-stat">
-        <div class="number">19,881</div>
+        <div class="number">15,109</div>
         <div class="label">Posts</div>
       </div>
       <div class="hero-stat">
-        <div class="number">482</div>
+        <div class="number">892</div>
         <div class="label">Members</div>
       </div>
       <div class="hero-stat">
-        <div class="number">6</div>
-        <div class="label">Online Now</div>
+        <div class="number">128</div>
+        <div class="label">In Game</div>
       </div>
+    </div>
+    <div class="hero-buttons">
+      <a href="register.html" class="btn btn-primary btn-lg">Join the Server</a>
+      <a href="#" class="btn btn-secondary btn-lg" onclick="alert('Connect via FiveM: connect connect.nighttimerp.com')">Connect Now</a>
     </div>
   </section>
 
@@ -60,20 +57,22 @@
       <div>
         <div class="section-header">
           <h2>Forum Categories</h2>
-          <button class="btn btn-ghost btn-sm">View All</button>
         </div>
         <div class="category-list" id="category-list"></div>
 
         <div class="section-header" style="margin-top:2rem">
           <h2>Recent Threads</h2>
-          <a href="category.html?id=1" class="btn btn-ghost btn-sm">View All</a>
         </div>
         <div class="thread-list" id="thread-list"></div>
       </div>
 
       <aside class="sidebar">
         <div class="sidebar-card">
-          <h3>🟢 Online Now</h3>
+          <div id="server-status"></div>
+        </div>
+
+        <div class="sidebar-card" id="user-sidebar-card">
+          <h3>🟢 Online Now (7)</h3>
           <div class="online-users" id="online-users"></div>
         </div>
 
@@ -85,42 +84,42 @@
         <div class="sidebar-card">
           <h3>🏆 Top Members</h3>
           <div style="display:flex;flex-direction:column;gap:8px;">
-            <a href="profile.html?user=NightWalker" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
-              <div class="avatar avatar-sm">N</div>
+            <a href="profile.html?user=Admin" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+              <div class="avatar avatar-sm" style="background:var(--danger)">A</div>
               <div>
-                <div style="font-size:0.85rem;font-weight:600;color:var(--accent-light)">NightWalker</div>
+                <div style="font-size:0.85rem;font-weight:600;color:var(--accent-light)">Admin</div>
+                <div style="font-size:0.7rem;color:var(--text-muted)">12,400 rep</div>
+              </div>
+            </a>
+            <a href="profile.html?user=CptMartinez" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+              <div class="avatar avatar-sm" style="background:var(--lspd)">C</div>
+              <div>
+                <div style="font-size:0.85rem;font-weight:600;color:var(--accent-light)">CptMartinez</div>
                 <div style="font-size:0.7rem;color:var(--text-muted)">4,200 rep</div>
               </div>
             </a>
-            <a href="profile.html?user=DarkMage" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
-              <div class="avatar avatar-sm">D</div>
+            <a href="profile.html?user=DrNightshade" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
+              <div class="avatar avatar-sm" style="background:var(--ems)">D</div>
               <div>
-                <div style="font-size:0.85rem;font-weight:600;color:var(--accent-light)">DarkMage</div>
+                <div style="font-size:0.85rem;font-weight:600;color:var(--accent-light)">DrNightshade</div>
                 <div style="font-size:0.7rem;color:var(--text-muted)">3,100 rep</div>
-              </div>
-            </a>
-            <a href="profile.html?user=CyberGhost" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
-              <div class="avatar avatar-sm">C</div>
-              <div>
-                <div style="font-size:0.85rem;font-weight:600;color:var(--accent-light)">CyberGhost</div>
-                <div style="font-size:0.7rem;color:var(--text-muted)">1,800 rep</div>
               </div>
             </a>
           </div>
         </div>
 
         <div class="sidebar-card" style="background:var(--gradient-1);border:none;text-align:center;">
-          <div style="font-size:1.5rem;margin-bottom:0.5rem;">⚔️</div>
-          <div style="font-weight:700;margin-bottom:0.25rem;">Monthly Tournament</div>
-          <div style="font-size:0.8rem;color:rgba(255,255,255,0.8);margin-bottom:1rem;">1v1 elimination bracket — Saturday 8PM UTC</div>
-          <a href="thread.html?id=4" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;">Sign Up Now</a>
+          <div style="font-size:1.3rem;margin-bottom:0.5rem;">🎮</div>
+          <div style="font-weight:700;margin-bottom:0.25rem;color:#000;">Join NightTime RP</div>
+          <div style="font-size:0.75rem;color:rgba(0,0,0,0.6);margin-bottom:1rem;">FiveM Server: connect.nighttimerp.com</div>
+          <a href="#" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;" onclick="alert('Connect via FiveM console (F8): connect connect.nighttimerp.com')">Connect</a>
         </div>
       </aside>
     </div>
   </div>
 
   <footer class="footer">
-    <p>NightTime RP Forums &copy; 2026 — Where shadows tell stories.</p>
+    <p>NightTime RP &copy; 2026 — FiveM Roleplay Server &middot; discord.gg/nighttimerp</p>
   </footer>
 
   <script src="js/app.js"></script>
