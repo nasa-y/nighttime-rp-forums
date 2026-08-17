@@ -1,3 +1,6 @@
+// ===== CONFIGURATION =====
+const API_BASE = window.location.origin;
+
 // ===== AUTH SYSTEM (localStorage) =====
 function getUsers() {
   return JSON.parse(localStorage.getItem("ntp_users") || "[]");
@@ -88,7 +91,7 @@ function handleLogin(e) {
   window.location.href = "index.html";
 }
 
-// ===== MOCK DATA =====
+// ===== FORUM DATA =====
 const categories = [
   { id: 1, icon: "📢", name: "Announcements", description: "Server news, updates, and important information", threads: 47, posts: 312, lastThread: "Patch 2.4 — New vehicles & interiors", lastAuthor: "Admin", lastTime: "1 hr ago", color: "var(--accent)" },
   { id: 2, icon: "📋", name: "Character Applications", description: "Submit and review character whitelisting applications", threads: 234, posts: 1890, lastThread: "New character: Marcus Cole — LSPD Transfer", lastAuthor: "xXDarkAngelXx", lastTime: "20 min ago", color: "var(--success)" },
@@ -123,30 +126,157 @@ const threads = [
     content: `<p><strong>Connecting to NightTime RP is easy:</strong></p>
 <p>1. Download FiveM from <strong>fivem.net</strong></p>
 <p>2. Open FiveM and press <strong>F8</strong> to open the console</p>
-<p>3. Type: <code>connect connect.nighttimerp.com</code></p>
+<p>3. Type: <code>connect 81.111.74.157:40120</code></p>
 <p>4. Wait for the server to load and follow the character creation prompt</p>
 <p>5. You're in! Head to the apartment selector and start your new life in Los Santos.</p>
 <p><strong>Need help?</strong> Join our Discord: discord.gg/nighttimerp</p>`
   },
 ];
 
-const onlineUsers = [
-  { name: "Admin", role: "Admin", avatar: "A" },
-  { name: "CptMartinez", role: "LSPD", avatar: "C" },
-  { name: "OG_Smoke", role: "Families", avatar: "O" },
-  { name: "DrNightshade", role: "EMS", avatar: "D" },
-  { name: "BallSoHard99", role: "Ballas", avatar: "B" },
-  { name: "MikeWheeler", role: "Civilian", avatar: "M" },
-  { name: "WrenchMaster", role: "Mechanic", avatar: "W" },
-];
+// ===== LIVE SERVER DATA =====
+let serverStatus = { online: false, players: 0, maxPlayers: 48, name: "NightTime RP" };
+let livePlayers = [];
+let chatMessages = [];
+let chatPollInterval = null;
 
-const activities = [
-  { user: "OG_Smoke", action: "posted in", target: "Gang Territory", time: "1m ago" },
-  { user: "CptMartinez", action: "submitted a report in", target: "LSPD", time: "5m ago" },
-  { user: "xXDarkAngelXx", action: "applied in", target: "Character Applications", time: "12m ago" },
-  { user: "DrNightshade", action: "replied to", target: "EMS Dispatch", time: "18m ago" },
-  { user: "StaffTeam", action: "updated Case", target: "#4821", time: "30m ago" },
-];
+async function fetchServerStatus() {
+  try {
+    const res = await fetch(`${API_BASE}/api/status`);
+    serverStatus = await res.json();
+    updateServerStatusUI();
+    updatePlayerList();
+  } catch (err) {
+    serverStatus = { online: false, players: 0, maxPlayers: 48, name: "NightTime RP" };
+    updateServerStatusUI();
+  }
+}
+
+async function fetchPlayers() {
+  try {
+    const res = await fetch(`${API_BASE}/api/players`);
+    const data = await res.json();
+    if (data.online) {
+      livePlayers = data.players;
+      updatePlayerList();
+    }
+  } catch (err) {
+    livePlayers = [];
+    updatePlayerList();
+  }
+}
+
+async function fetchChat() {
+  try {
+    const res = await fetch(`${API_BASE}/api/chat?limit=30`);
+    chatMessages = await res.json();
+    updateChatUI();
+  } catch (err) {
+    // Backend not running — use empty chat
+  }
+}
+
+async function sendChatMessage(username, message) {
+  try {
+    await fetch(`${API_BASE}/api/chat`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, message }),
+    });
+    await fetchChat();
+  } catch (err) {
+    alert("Could not send message. Is the backend server running?");
+  }
+}
+
+// ===== UI UPDATES =====
+function updateServerStatusUI() {
+  const el = document.getElementById("server-status");
+  if (!el) return;
+
+  if (serverStatus.online) {
+    el.innerHTML = `
+      <div class="server-status">
+        <div class="dot"></div>
+        <span class="info">Server Online</span>
+        <span class="players">${serverStatus.players} / ${serverStatus.maxPlayers}</span>
+      </div>
+    `;
+  } else {
+    el.innerHTML = `
+      <div class="server-status" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.2);">
+        <div class="dot" style="background:var(--danger);"></div>
+        <span class="info" style="color:var(--danger);">Server Offline</span>
+        <span class="players">0 / ${serverStatus.maxPlayers}</span>
+      </div>
+    `;
+  }
+
+  // Update hero stats
+  const heroPlayers = document.getElementById("hero-players");
+  if (heroPlayers) heroPlayers.textContent = serverStatus.online ? serverStatus.players : 0;
+}
+
+function updatePlayerList() {
+  const container = document.getElementById("online-users");
+  if (!container) return;
+
+  if (livePlayers.length === 0) {
+    container.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted);padding:8px 0;">No players online</div>`;
+    return;
+  }
+
+  container.innerHTML = livePlayers.slice(0, 15).map((p) => `
+    <div class="online-user">
+      <div class="avatar avatar-sm">${p.name.charAt(0).toUpperCase()}<div class="status-dot"></div></div>
+      <span class="name">${escapeHtml(p.name)}</span>
+      <span style="margin-left:auto;font-size:0.65rem;color:var(--text-muted);">${p.ping}ms</span>
+    </div>
+  `).join("");
+
+  // Update online count in sidebar
+  const countEl = document.getElementById("online-count");
+  if (countEl) countEl.textContent = livePlayers.length;
+}
+
+function updateChatUI() {
+  const container = document.getElementById("chat-messages");
+  if (!container) return;
+
+  container.innerHTML = chatMessages.map((m) => {
+    const isSystem = m.username === "[SYSTEM]" || m.source === "system";
+    const isGame = m.source === "game";
+    const sourceTag = isGame ? '<span style="color:var(--success);font-size:0.65rem;">[IN-GAME]</span> ' : "";
+    return `
+      <div class="chat-msg ${isSystem ? "chat-system" : ""}">
+        <span class="chat-user">${sourceTag}${escapeHtml(m.username)}</span>
+        <span class="chat-text">${escapeHtml(m.message)}</span>
+      </div>
+    `;
+  }).join("");
+
+  container.scrollTop = container.scrollHeight;
+}
+
+function handleChatSend(e) {
+  e.preventDefault();
+  const input = document.getElementById("chat-input");
+  const user = getCurrentUser();
+  if (!user) {
+    alert("Login to send messages to the server!");
+    return;
+  }
+  const msg = input.value.trim();
+  if (!msg) return;
+
+  sendChatMessage(user.name, msg);
+  input.value = "";
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
+}
 
 // ===== RENDER FUNCTIONS =====
 function renderNavbar() {
@@ -229,10 +359,8 @@ function renderCategories() {
 function renderThreads() {
   const list = document.getElementById("thread-list");
   if (!list) return;
-  const categoryId = new URLSearchParams(window.location.search).get("id");
-  const filtered = threads;
 
-  list.innerHTML = filtered.map((t) => `
+  list.innerHTML = threads.map((t) => `
     <a href="thread.html?id=${t.id}" class="thread-item ${t.pinned ? "pinned" : ""}" style="text-decoration:none;color:inherit;">
       <div class="thread-avatar">
         <div class="avatar">${t.avatar}</div>
@@ -279,29 +407,18 @@ function renderThread() {
     </div>
   `;
 
-  const roleMap = {
-    Admin: { badge: "admin", label: "Admin" },
-  };
-
-  const posts = [
-    { author: thread.author, avatar: thread.avatar, role: thread.authorRole, content: thread.content, date: "Today at 12:00 PM" },
-  ];
-
-  postList.innerHTML = posts.map((p, i) => {
-    const r = roleMap[p.author] || { badge: "member", label: "Member" };
-    return `
-    <div class="post-card" style="animation-delay:${i * 0.08}s">
+  postList.innerHTML = `
+    <div class="post-card">
       <div class="post-sidebar">
-        <a href="profile.html?user=${encodeURIComponent(p.author)}" style="text-decoration:none;"><div class="avatar avatar-lg">${p.avatar}</div></a>
-        <a href="profile.html?user=${encodeURIComponent(p.author)}" style="text-decoration:none;"><div class="username">${p.author}</div></a>
-        <span class="role ${r.badge}">${r.label}</span>
+        <a href="profile.html?user=${encodeURIComponent(thread.author)}" style="text-decoration:none;"><div class="avatar avatar-lg">${thread.avatar}</div></a>
+        <a href="profile.html?user=${encodeURIComponent(thread.author)}" style="text-decoration:none;"><div class="username">${thread.author}</div></a>
+        <span class="role admin">Admin</span>
         <div class="joined">Joined: Jan 2026</div>
-        <div class="posts-count">Posts: ${Math.floor(Math.random() * 500 + 50)}</div>
       </div>
       <div class="post-body">
-        <div class="post-content">${p.content}</div>
+        <div class="post-content">${thread.content}</div>
         <div class="post-footer">
-          <span class="post-date">${p.date}</span>
+          <span class="post-date">Posted 1 week ago</span>
           <div class="post-actions">
             <button onclick="alert('Liked!')">Like</button>
             <button onclick="document.querySelector('textarea.form-input').focus()">Reply</button>
@@ -309,8 +426,8 @@ function renderThread() {
           </div>
         </div>
       </div>
-    </div>`;
-  }).join("");
+    </div>
+  `;
 }
 
 function renderProfile() {
@@ -324,21 +441,15 @@ function renderProfile() {
   const storedUser = users.find((u) => u.name === userName);
 
   const defaultProfiles = {
-    Admin: { role: "admin", roleLabel: "Server Admin", bio: "Running NightTime RP since day one. Don't make me use my ban hammer.", joined: "Jan 2026", posts: 2890, threads: 145, reputation: 12400, online: true },
-    CptMartinez: { role: "police", roleLabel: "LSPD Captain", bio: "Protect and serve. Night shift veteran. I've seen things in Vinewood you wouldn't believe.", joined: "Feb 2026", posts: 1234, threads: 67, reputation: 4200, online: true },
-    OG_Smoke: { role: "member", roleLabel: "Families", bio: "Grove Street for life. Ain't nobody pushing us out.", joined: "Mar 2026", posts: 892, threads: 34, reputation: 2800, online: true },
-    DrNightshade: { role: "ems", roleLabel: "EMS Chief", bio: "Saving lives in Los Santos, one patient at a time. Don't call me unless someone's dying.", joined: "Feb 2026", posts: 678, threads: 23, reputation: 3100, online: true },
-    BallSoHard99: { role: "member", roleLabel: "Ballas", bio: "Purple til I die. Ballas run these streets.", joined: "Apr 2026", posts: 456, threads: 12, reputation: 1200, online: true },
+    Admin: { role: "admin", roleLabel: "Server Admin", bio: "Running NightTime RP since day one.", joined: "Jan 2026", posts: 2890, threads: 145, reputation: 12400, online: true },
   };
 
   const p = storedUser
     ? { role: storedUser.role, roleLabel: storedUser.role, bio: storedUser.bio, joined: storedUser.joined, posts: storedUser.posts, threads: storedUser.threads, reputation: storedUser.reputation, online: true }
     : defaultProfiles[userName] || { role: "member", roleLabel: "Member", bio: "Just another resident of Los Santos.", joined: "Jan 2026", posts: 0, threads: 0, reputation: 0, online: false };
 
-  const avatarBg = p.role === "admin" ? "var(--danger)" : p.role === "police" ? "var(--lspd)" : p.role === "ems" ? "var(--ems)" : "var(--gradient-1)";
-
   header.innerHTML = `
-    <div class="avatar avatar-xl" style="background:${avatarBg}">${userName.charAt(0).toUpperCase()}</div>
+    <div class="avatar avatar-xl">${userName.charAt(0).toUpperCase()}</div>
     <div class="profile-info">
       <h1>${userName}</h1>
       <span class="role-badge ${p.role}">${p.roleLabel}</span>
@@ -361,7 +472,7 @@ function renderProfile() {
   }
 
   if (recentPosts) {
-    recentPosts.innerHTML = threads.slice(0, 3).map((t) => `
+    recentPosts.innerHTML = threads.slice(0, 2).map((t) => `
       <a href="thread.html?id=${t.id}" class="thread-item" style="text-decoration:none;color:inherit;">
         <div class="thread-content">
           <h3>${t.title}</h3>
@@ -370,39 +481,6 @@ function renderProfile() {
       </a>
     `).join("");
   }
-}
-
-function renderOnlineUsers() {
-  const container = document.getElementById("online-users");
-  if (!container) return;
-  container.innerHTML = onlineUsers.map((u) => `
-    <a href="profile.html?user=${u.name}" class="online-user" style="text-decoration:none;color:inherit;">
-      <div class="avatar avatar-sm">${u.avatar}<div class="status-dot"></div></div>
-      <span class="name">${u.name}</span>
-      <span style="margin-left:auto;font-size:0.65rem;color:var(--text-muted);text-transform:uppercase;">${u.role}</span>
-    </a>
-  `).join("");
-}
-
-function renderActivity() {
-  const container = document.getElementById("recent-activity");
-  if (!container) return;
-  container.innerHTML = activities.map((a) => `
-    <div class="activity-item">
-      <span class="time">${a.time}</span>
-      <span><strong>${a.user}</strong> ${a.action} <em>${a.target}</em></span>
-    </div>
-  `).join("");
-}
-
-function renderServerStatus() {
-  const el = document.getElementById("server-status");
-  if (!el) return;
-  el.innerHTML = `
-    <div class="dot"></div>
-    <span class="info">Server Online</span>
-    <span class="players">128 / 256 players</span>
-  `;
 }
 
 function highlightNav() {
@@ -422,8 +500,22 @@ document.addEventListener("DOMContentLoaded", () => {
   renderThreads();
   renderThread();
   renderProfile();
-  renderOnlineUsers();
-  renderActivity();
-  renderServerStatus();
   highlightNav();
+
+  // Fetch live server data
+  fetchServerStatus();
+  fetchPlayers();
+
+  // Set up chat form
+  const chatForm = document.getElementById("chat-form");
+  if (chatForm) {
+    chatForm.addEventListener("submit", handleChatSend);
+    fetchChat();
+    // Poll chat every 5 seconds
+    chatPollInterval = setInterval(fetchChat, 5000);
+  }
+
+  // Poll server status every 15 seconds
+  setInterval(fetchServerStatus, 15000);
+  setInterval(fetchPlayers, 15000);
 });

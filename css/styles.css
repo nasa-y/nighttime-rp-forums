@@ -1279,3 +1279,27 @@ textarea.form-input {
   text-transform: uppercase;
   font-weight: 600;
 }
+
+/* ===== LIVE CHAT ===== */
+.chat-msg {
+  display: flex;
+  gap: 6px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.chat-msg.chat-system {
+  justify-content: center;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.chat-user {
+  font-weight: 700;
+  color: var(--accent-light);
+  white-space: nowrap;
+}
+
+.chat-text {
+  color: var(--text-secondary);
+}
