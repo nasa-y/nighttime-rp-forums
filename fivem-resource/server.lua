@@ -4,9 +4,9 @@
     Add to server.cfg: ensure nighttime-integration
 ]]
 
-local WEBSITE_URL = "http://localhost:3000" -- Change to your website URL
-local API_KEY = "nighttime-secret-key"      -- Change this to a secure key
-local UPDATE_INTERVAL = 10                   -- Seconds between status updates
+local WEBSITE_URL = "http://localhost:3000"  -- Change to your website URL if hosted remotely
+local API_KEY = "YOUR_SERVER_KEY_HERE"  -- Replace with your cfxk_ key
+local UPDATE_INTERVAL = 10
 
 -- Send server status to website periodically
 Citizen.CreateThread(function()
