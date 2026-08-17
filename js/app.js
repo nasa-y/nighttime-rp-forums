@@ -128,49 +128,6 @@ const threads = [
 <p>5. You're in! Head to the apartment selector and start your new life in Los Santos.</p>
 <p><strong>Need help?</strong> Join our Discord: discord.gg/nighttimerp</p>`
   },
-  {
-    id: 3, pinned: false, title: "Patrol Report — Officer Martinez 8/16/2026",
-    author: "CptMartinez", authorRole: "member", avatar: "C", tag: "ic",
-    replies: 8, views: 234, lastReply: "LtRivera", lastTime: "45 min ago",
-    content: `<p><strong>Shift:</strong> Night (2200-0600)<br><strong>Patrol Zone:</strong> Vinewood / Rockford Hills<br><strong>Partner:</strong> Ofc. Thompson</p>
-<p><strong>2230</strong> — Conducted traffic stop on Route 68. Vehicle had expired tags. Verbal warning issued.</p>
-<p><strong>2345</strong> — Responded to 10-31 (crime in progress) at Vinewood Blvd. Two individuals fighting outside the liquor store. Both parties separated, no arrests made.</p>
-<p><strong>0120</strong> — Pursued stolen vehicle (red Buffalo) from Legion Square. Lost visual at the tunnels. BOLO issued.</p>
-<p><strong>0310</strong> — Assisted with traffic control near the casino due to a vehicle accident.</p>
-<p><em>Overall quiet shift. Need more units on night patrol.</em></p>`
-  },
-  {
-    id: 4, pinned: false, title: "The Families vs Ballas — Who Really Runs Grove Street?",
-    author: "OG_Smoke", authorRole: "member", avatar: "O", tag: "ic",
-    replies: 67, views: 2100, lastReply: "BallSoHard99", lastTime: "10 min ago",
-    content: `<p><em>*OG_Smoke pulls up in a green Buccaneer, leanin' out the window*</em></p>
-<p>Aye, let's settle this once and for all. Grove Street used to be Families territory. Then Ballas pushed in from Chamberlain. Now what?</p>
-<p>Families still hold the block. Ballas got the apartments and the corner on Forum Drive. But everybody knows — Families run this neighborhood.</p>
-<p>Ballas can talk all they want. But when the shots ring out, who's still standing?</p>
-<p><em>*He spits on the ground*</em></p>
-<p>Any Balla wanna dispute this, you know where to find me. Grove Street. For life.</p>`
-  },
-  {
-    id: 5, pinned: false, title: "New Ambulance Dispatch Protocol — Pillbox Medical",
-    author: "DrNightshade", authorRole: "member", avatar: "D", tag: "ic",
-    replies: 14, views: 456, lastReply: "EMT_Johnson", lastTime: "2 hrs ago",
-    content: `<p><strong>Attention all Pillbox Hill Medical Staff:</strong></p>
-<p>Starting immediately, we're implementing new dispatch protocols:</p>
-<p>• <strong>Priority 1 (Life Threatening)</strong> — All available units respond immediately</p>
-<p>• <strong>Priority 2 (Serious Injury)</strong> — Nearest unit responds</p>
-<p>• <strong>Priority 3 (Non-Urgent)</strong> — Available unit on next rotation</p>
-<p>All units must check in with dispatch upon going 10-8 (in service). Stay radio-equipped at all times.</p>
-<p><em>— Dr. Nightshade, Chief of Medicine</em></p>`
-  },
-  {
-    id: 6, pinned: false, title: "Report: RDM near Legion Square — Case #4821",
-    author: "StaffTeam", authorRole: "mod", avatar: "S", tag: "report",
-    replies: 5, views: 89, lastReply: "StaffTeam", lastTime: "30 min ago",
-    content: `<p><strong>Report Filed:</strong> Random Deathmatch<br><strong>Location:</strong> Legion Square, 14:32<br><strong>Victim:</strong> xXCasualPlayerXx<br><strong>Accused:</strong> DarkViper99</p>
-<p><strong>Description:</strong> Victim reports walking through Legion Square when the accused approached and shot them without any prior RP interaction or warning. No words were exchanged before the shots were fired.</p>
-<p><strong>Status:</strong> Under investigation. Both parties have been contacted for statements.</p>
-<p><em>If you witnessed this incident, please open a ticket on Discord with your statement.</em></p>`
-  },
 ];
 
 const onlineUsers = [
@@ -273,7 +230,7 @@ function renderThreads() {
   const list = document.getElementById("thread-list");
   if (!list) return;
   const categoryId = new URLSearchParams(window.location.search).get("id");
-  const filtered = categoryId ? threads.filter((_, i) => i < 4) : threads;
+  const filtered = threads;
 
   list.innerHTML = filtered.map((t) => `
     <a href="thread.html?id=${t.id}" class="thread-item ${t.pinned ? "pinned" : ""}" style="text-decoration:none;color:inherit;">
@@ -324,18 +281,10 @@ function renderThread() {
 
   const roleMap = {
     Admin: { badge: "admin", label: "Admin" },
-    CptMartinez: { badge: "police", label: "LSPD Captain" },
-    OG_Smoke: { badge: "member", label: "Families OG" },
-    DrNightshade: { badge: "ems", label: "Chief of Medicine" },
-    BallSoHard99: { badge: "member", label: "Ballas" },
-    StaffTeam: { badge: "mod", label: "Staff" },
   };
 
   const posts = [
     { author: thread.author, avatar: thread.avatar, role: thread.authorRole, content: thread.content, date: "Today at 12:00 PM" },
-    { author: "CptMartinez", avatar: "C", role: "police", content: `<p>Good report. We need to increase patrol presence in that area during night shift. I'll bring it up at the next LSPD briefing.</p>`, date: "Today at 12:30 PM" },
-    { author: "OG_Smoke", avatar: "O", role: "member", content: `<p><em>*leans against the wall*</em></p><p>Street's been quiet lately. Too quiet. Something's brewing, I can feel it.</p>`, date: "Today at 1:15 PM" },
-    { author: "StaffTeam", avatar: "S", role: "mod", content: `<p>We're looking into this. If anyone has clips or screenshots, please submit them through the ticket system on Discord.</p><p><strong>Status:</strong> Under review</p>`, date: "Today at 2:00 PM" },
   ];
 
   postList.innerHTML = posts.map((p, i) => {
