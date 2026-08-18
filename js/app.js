@@ -1,7 +1,8 @@
 // ===== CONFIGURATION =====
 const FIVEM_IP = "81.111.74.157";
 const FIVEM_PORT = 40120;
-const FIVEM_URL = `http://${FIVEM_IP}:${FIVEM_PORT}`;
+const FIVEM_RAW = `http://${FIVEM_IP}:${FIVEM_PORT}`;
+const FIVEM_URL = `https://api.allorigins.win/raw?url=${encodeURIComponent(FIVEM_RAW)}`;
 const CONNECT_CMD = `connect ${FIVEM_IP}:${FIVEM_PORT}`;
 
 // ===== AUTH SYSTEM (localStorage) =====
