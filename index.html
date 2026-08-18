@@ -42,13 +42,14 @@
         <div class="label">Members</div>
       </div>
       <div class="hero-stat">
-        <div class="number">128</div>
+        <div class="number" id="hero-players">0</div>
         <div class="label">In Game</div>
       </div>
     </div>
     <div class="hero-buttons">
       <a href="register.html" class="btn btn-primary btn-lg">Join the Server</a>
-      <a href="#" class="btn btn-secondary btn-lg" onclick="alert('Open FiveM console (F8) and type:\nconnect 81.111.74.157:40120')">Connect Now</a>
+      <button class="btn btn-secondary btn-lg" onclick="copyConnect()">Copy Connect Code</button>
+      <span id="copy-feedback" style="display:none;color:var(--success);font-weight:600;margin-left:8px;">Copied!</span>
     </div>
   </section>
 
@@ -64,6 +65,10 @@
       <aside class="sidebar">
         <div class="sidebar-card">
           <div id="server-status"></div>
+          <div style="margin-top:0.75rem;padding:0.6rem;background:var(--bg-tertiary);border-radius:var(--radius-sm);display:flex;align-items:center;gap:8px;">
+            <code style="flex:1;font-size:0.8rem;color:var(--accent-light);word-break:break-all;">connect 81.111.74.157:40120</code>
+            <button class="btn btn-primary btn-sm" onclick="copyConnect()" style="white-space:nowrap;">Copy</button>
+          </div>
         </div>
 
         <div class="sidebar-card" id="user-sidebar-card">
@@ -83,11 +88,6 @@
         </div>
 
         <div class="sidebar-card">
-          <h3>⏱️ Recent Activity</h3>
-          <div class="recent-activity" id="recent-activity"></div>
-        </div>
-
-        <div class="sidebar-card">
           <h3>🏆 Top Members</h3>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <a href="profile.html?user=Admin" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
@@ -97,28 +97,14 @@
                 <div style="font-size:0.7rem;color:var(--text-muted)">12,400 rep</div>
               </div>
             </a>
-            <a href="profile.html?user=CptMartinez" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
-              <div class="avatar avatar-sm" style="background:var(--lspd)">C</div>
-              <div>
-                <div style="font-size:0.85rem;font-weight:600;color:var(--accent-light)">CptMartinez</div>
-                <div style="font-size:0.7rem;color:var(--text-muted)">4,200 rep</div>
-              </div>
-            </a>
-            <a href="profile.html?user=DrNightshade" style="display:flex;align-items:center;gap:8px;text-decoration:none;color:inherit;">
-              <div class="avatar avatar-sm" style="background:var(--ems)">D</div>
-              <div>
-                <div style="font-size:0.85rem;font-weight:600;color:var(--accent-light)">DrNightshade</div>
-                <div style="font-size:0.7rem;color:var(--text-muted)">3,100 rep</div>
-              </div>
-            </a>
           </div>
         </div>
 
         <div class="sidebar-card" style="background:var(--gradient-1);border:none;text-align:center;">
           <div style="font-size:1.3rem;margin-bottom:0.5rem;">🎮</div>
           <div style="font-weight:700;margin-bottom:0.25rem;color:#000;">Join NightTime RP</div>
-          <div style="font-size:0.75rem;color:rgba(0,0,0,0.6);margin-bottom:1rem;">81.111.74.157:40120</div>
-          <a href="#" class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;" onclick="alert('Open FiveM console (F8) and type:\nconnect 81.111.74.157:40120')">Connect</a>
+          <div style="font-size:0.75rem;color:rgba(0,0,0,0.6);margin-bottom:0.75rem;">FiveM Server</div>
+          <button class="btn btn-secondary btn-sm" style="width:100%;justify-content:center;" onclick="copyConnect()">Copy & Connect</button>
         </div>
       </aside>
     </div>

@@ -1,5 +1,8 @@
 // ===== CONFIGURATION =====
-const API_BASE = window.location.origin;
+const FIVEM_IP = "81.111.74.157";
+const FIVEM_PORT = 40120;
+const FIVEM_URL = `http://${FIVEM_IP}:${FIVEM_PORT}`;
+const CONNECT_CMD = `connect ${FIVEM_IP}:${FIVEM_PORT}`;
 
 // ===== AUTH SYSTEM (localStorage) =====
 function getUsers() {
@@ -27,8 +30,8 @@ function handleRegister(e) {
   e.preventDefault();
   const errEl = document.getElementById("auth-error");
   const successEl = document.getElementById("auth-success");
-  errEl.classList.remove("show");
-  successEl.classList.remove("show");
+  if (errEl) errEl.classList.remove("show");
+  if (successEl) successEl.classList.remove("show");
 
   const name = document.getElementById("reg-name").value.trim();
   const email = document.getElementById("reg-email").value.trim();
@@ -65,15 +68,17 @@ function handleRegister(e) {
   saveUsers(users);
   setCurrentUser(user);
 
-  successEl.textContent = "Account created! Redirecting...";
-  successEl.classList.add("show");
+  if (successEl) {
+    successEl.textContent = "Account created! Redirecting...";
+    successEl.classList.add("show");
+  }
   setTimeout(() => { window.location.href = "index.html"; }, 1000);
 }
 
 function handleLogin(e) {
   e.preventDefault();
   const errEl = document.getElementById("auth-error");
-  errEl.classList.remove("show");
+  if (errEl) errEl.classList.remove("show");
 
   const email = document.getElementById("login-email").value.trim();
   const password = document.getElementById("login-password").value;
@@ -89,6 +94,26 @@ function handleLogin(e) {
 
   setCurrentUser(user);
   window.location.href = "index.html";
+}
+
+// ===== COPY CONNECT CODE =====
+function copyConnect() {
+  navigator.clipboard.writeText(CONNECT_CMD).then(() => {
+    const el = document.getElementById("copy-feedback");
+    if (el) {
+      el.textContent = "Copied!";
+      el.style.display = "inline";
+      setTimeout(() => { el.style.display = "none"; }, 2000);
+    }
+  }).catch(() => {
+    prompt("Copy this command:", CONNECT_CMD);
+  });
+}
+
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str;
+  return div.innerHTML;
 }
 
 // ===== FORUM DATA =====
@@ -126,7 +151,7 @@ const threads = [
     content: `<p><strong>Connecting to NightTime RP is easy:</strong></p>
 <p>1. Download FiveM from <strong>fivem.net</strong></p>
 <p>2. Open FiveM and press <strong>F8</strong> to open the console</p>
-<p>3. Type: <code>connect 81.111.74.157:40120</code></p>
+<p>3. Type: <code>connect ${FIVEM_IP}:${FIVEM_PORT}</code></p>
 <p>4. Wait for the server to load and follow the character creation prompt</p>
 <p>5. You're in! Head to the apartment selector and start your new life in Los Santos.</p>
 <p><strong>Need help?</strong> Join our Discord: discord.gg/nighttimerp</p>`
@@ -137,58 +162,41 @@ const threads = [
 let serverStatus = { online: false, players: 0, maxPlayers: 48, name: "NightTime RP" };
 let livePlayers = [];
 let chatMessages = [];
-let chatPollInterval = null;
 
 async function fetchServerStatus() {
   try {
-    const res = await fetch(`${API_BASE}/api/status`);
-    serverStatus = await res.json();
-    updateServerStatusUI();
-    updatePlayerList();
+    const res = await fetch(`${FIVEM_URL}/info.json`);
+    const data = await res.json();
+    serverStatus = {
+      online: true,
+      name: data.hostname || "NightTime RP",
+      players: Array.isArray(data.players) ? data.players.length : (data.players || 0),
+      maxPlayers: data.sv_maxclients || 48,
+      map: data.mapname || "Los Santos",
+      gamemode: data.gamemode || "roleplay",
+    };
   } catch (err) {
     serverStatus = { online: false, players: 0, maxPlayers: 48, name: "NightTime RP" };
-    updateServerStatusUI();
   }
+  updateServerStatusUI();
+  updatePlayerList();
 }
 
 async function fetchPlayers() {
   try {
-    const res = await fetch(`${API_BASE}/api/players`);
+    const res = await fetch(`${FIVEM_URL}/players.json`);
     const data = await res.json();
-    if (data.online) {
-      livePlayers = data.players;
-      updatePlayerList();
-    }
+    livePlayers = Array.isArray(data) ? data.map((p) => ({
+      id: p.id,
+      name: p.name || "Unknown",
+      ping: p.ping || 0,
+    })) : [];
   } catch (err) {
     livePlayers = [];
-    updatePlayerList();
   }
+  updatePlayerList();
 }
 
-async function fetchChat() {
-  try {
-    const res = await fetch(`${API_BASE}/api/chat?limit=30`);
-    chatMessages = await res.json();
-    updateChatUI();
-  } catch (err) {
-    // Backend not running — use empty chat
-  }
-}
-
-async function sendChatMessage(username, message) {
-  try {
-    await fetch(`${API_BASE}/api/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, message }),
-    });
-    await fetchChat();
-  } catch (err) {
-    alert("Could not send message. Is the backend server running?");
-  }
-}
-
-// ===== UI UPDATES =====
 function updateServerStatusUI() {
   const el = document.getElementById("server-status");
   if (!el) return;
@@ -211,7 +219,6 @@ function updateServerStatusUI() {
     `;
   }
 
-  // Update hero stats
   const heroPlayers = document.getElementById("hero-players");
   if (heroPlayers) heroPlayers.textContent = serverStatus.online ? serverStatus.players : 0;
 }
@@ -222,60 +229,18 @@ function updatePlayerList() {
 
   if (livePlayers.length === 0) {
     container.innerHTML = `<div style="font-size:0.8rem;color:var(--text-muted);padding:8px 0;">No players online</div>`;
-    return;
+  } else {
+    container.innerHTML = livePlayers.slice(0, 15).map((p) => `
+      <div class="online-user">
+        <div class="avatar avatar-sm">${escapeHtml(p.name.charAt(0))}<div class="status-dot"></div></div>
+        <span class="name">${escapeHtml(p.name)}</span>
+        <span style="margin-left:auto;font-size:0.65rem;color:var(--text-muted);">${p.ping}ms</span>
+      </div>
+    `).join("");
   }
 
-  container.innerHTML = livePlayers.slice(0, 15).map((p) => `
-    <div class="online-user">
-      <div class="avatar avatar-sm">${p.name.charAt(0).toUpperCase()}<div class="status-dot"></div></div>
-      <span class="name">${escapeHtml(p.name)}</span>
-      <span style="margin-left:auto;font-size:0.65rem;color:var(--text-muted);">${p.ping}ms</span>
-    </div>
-  `).join("");
-
-  // Update online count in sidebar
   const countEl = document.getElementById("online-count");
   if (countEl) countEl.textContent = livePlayers.length;
-}
-
-function updateChatUI() {
-  const container = document.getElementById("chat-messages");
-  if (!container) return;
-
-  container.innerHTML = chatMessages.map((m) => {
-    const isSystem = m.username === "[SYSTEM]" || m.source === "system";
-    const isGame = m.source === "game";
-    const sourceTag = isGame ? '<span style="color:var(--success);font-size:0.65rem;">[IN-GAME]</span> ' : "";
-    return `
-      <div class="chat-msg ${isSystem ? "chat-system" : ""}">
-        <span class="chat-user">${sourceTag}${escapeHtml(m.username)}</span>
-        <span class="chat-text">${escapeHtml(m.message)}</span>
-      </div>
-    `;
-  }).join("");
-
-  container.scrollTop = container.scrollHeight;
-}
-
-function handleChatSend(e) {
-  e.preventDefault();
-  const input = document.getElementById("chat-input");
-  const user = getCurrentUser();
-  if (!user) {
-    alert("Login to send messages to the server!");
-    return;
-  }
-  const msg = input.value.trim();
-  if (!msg) return;
-
-  sendChatMessage(user.name, msg);
-  input.value = "";
-}
-
-function escapeHtml(str) {
-  const div = document.createElement("div");
-  div.textContent = str;
-  return div.innerHTML;
 }
 
 // ===== RENDER FUNCTIONS =====
@@ -292,12 +257,11 @@ function renderNavbar() {
       </div>
       <div class="user-menu">
         <button class="user-menu-btn" onclick="toggleDropdown()">
-          <div class="avatar avatar-sm">${user.name.charAt(0).toUpperCase()}</div>
-          ${user.name}
+          <div class="avatar avatar-sm">${escapeHtml(user.name.charAt(0))}</div>
+          ${escapeHtml(user.name)}
         </button>
         <div class="user-dropdown" id="user-dropdown">
           <a href="profile.html?user=${encodeURIComponent(user.name)}">My Profile</a>
-          <a href="#" onclick="alert('Settings coming soon!')">Settings</a>
           <div class="divider"></div>
           <button onclick="logout()">Log Out</button>
         </div>
@@ -317,7 +281,7 @@ function renderNavbar() {
 
 function toggleDropdown() {
   const dd = document.getElementById("user-dropdown");
-  dd.classList.toggle("show");
+  if (dd) dd.classList.toggle("show");
 }
 
 document.addEventListener("click", (e) => {
@@ -368,21 +332,11 @@ function renderThreads() {
       <div class="thread-content">
         <h3>${t.title}</h3>
         <div class="thread-meta">
-          by <span class="author">${t.author}</span> &middot; ${t.tag.toUpperCase()} &middot; Last reply by ${t.lastReply} &middot; ${t.lastTime}
+          by <span class="author">${t.author}</span> &middot; ${t.tag.toUpperCase()} &middot; ${t.views.toLocaleString()} views
         </div>
       </div>
       <div class="thread-tags">
         <span class="tag tag-${t.tag}">${t.tag}</span>
-      </div>
-      <div class="thread-stats">
-        <div class="stat">
-          <span class="stat-num">${t.replies}</span>
-          <span class="stat-label">Replies</span>
-        </div>
-        <div class="stat">
-          <span class="stat-num">${t.views.toLocaleString()}</span>
-          <span class="stat-label">Views</span>
-        </div>
       </div>
     </a>
   `).join("");
@@ -413,7 +367,6 @@ function renderThread() {
         <a href="profile.html?user=${encodeURIComponent(thread.author)}" style="text-decoration:none;"><div class="avatar avatar-lg">${thread.avatar}</div></a>
         <a href="profile.html?user=${encodeURIComponent(thread.author)}" style="text-decoration:none;"><div class="username">${thread.author}</div></a>
         <span class="role admin">Admin</span>
-        <div class="joined">Joined: Jan 2026</div>
       </div>
       <div class="post-body">
         <div class="post-content">${thread.content}</div>
@@ -421,8 +374,6 @@ function renderThread() {
           <span class="post-date">Posted 1 week ago</span>
           <div class="post-actions">
             <button onclick="alert('Liked!')">Like</button>
-            <button onclick="document.querySelector('textarea.form-input').focus()">Reply</button>
-            <button onclick="alert('Quoted!')">Quote</button>
           </div>
         </div>
       </div>
@@ -449,15 +400,15 @@ function renderProfile() {
     : defaultProfiles[userName] || { role: "member", roleLabel: "Member", bio: "Just another resident of Los Santos.", joined: "Jan 2026", posts: 0, threads: 0, reputation: 0, online: false };
 
   header.innerHTML = `
-    <div class="avatar avatar-xl">${userName.charAt(0).toUpperCase()}</div>
+    <div class="avatar avatar-xl">${escapeHtml(userName.charAt(0))}</div>
     <div class="profile-info">
-      <h1>${userName}</h1>
+      <h1>${escapeHtml(userName)}</h1>
       <span class="role-badge ${p.role}">${p.roleLabel}</span>
-      <p class="bio">${p.bio}</p>
+      <p class="bio">${escapeHtml(p.bio)}</p>
       <div class="profile-meta">
         <span>Joined ${p.joined}</span>
         <span>Los Santos</span>
-        <span>${p.online ? "🟢 Online" : "⚫ Offline"}</span>
+        <span>${p.online ? "Online" : "Offline"}</span>
       </div>
     </div>
   `;
@@ -506,16 +457,9 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchServerStatus();
   fetchPlayers();
 
-  // Set up chat form
-  const chatForm = document.getElementById("chat-form");
-  if (chatForm) {
-    chatForm.addEventListener("submit", handleChatSend);
-    fetchChat();
-    // Poll chat every 5 seconds
-    chatPollInterval = setInterval(fetchChat, 5000);
-  }
-
-  // Poll server status every 15 seconds
-  setInterval(fetchServerStatus, 15000);
-  setInterval(fetchPlayers, 15000);
+  // Poll every 15 seconds
+  setInterval(() => {
+    fetchServerStatus();
+    fetchPlayers();
+  }, 15000);
 });

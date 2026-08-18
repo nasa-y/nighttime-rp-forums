@@ -1303,3 +1303,23 @@ textarea.form-input {
 .chat-text {
   color: var(--text-secondary);
 }
+
+/* ===== CONNECT CODE BOX ===== */
+.connect-box {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 0.75rem;
+}
+
+.connect-box code {
+  flex: 1;
+  font-size: 0.8rem;
+  color: var(--accent-light);
+  word-break: break-all;
+  user-select: all;
+}
